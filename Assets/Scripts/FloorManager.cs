@@ -8,6 +8,7 @@ public class FloorManager : MonoBehaviour
     public void SpawnFloor()
     {
         int r = Random.Range(0, floorPrefabs.Length);
-        Instantiate(floorPrefabs[r], transform);
+        GameObject floor = Instantiate(floorPrefabs[r], transform);
+        floor.transform.position = new Vector3(Random.Range(-3.5f, 5.7f), -6f, 0f);
     }
 }
