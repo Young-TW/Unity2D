@@ -3,7 +3,11 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - DeathLine
+  - Normal
+  - Nails
+  - Ceiling
   layers:
   - Default
   - TransparentFX
