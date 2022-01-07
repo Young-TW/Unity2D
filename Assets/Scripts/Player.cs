@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 public class Player : MonoBehaviour
 {
     [SerializeField] float moveSpeed = 1f;
@@ -16,6 +17,7 @@ public class Player : MonoBehaviour
     Animator anim;
     SpriteRenderer render;
     AudioSource deathSound;
+    [SerializeField] GameObject replayButton;
     // Start is called before the first frame update
     void Start()
     {
@@ -54,7 +56,6 @@ public class Player : MonoBehaviour
         {
             if(other.contacts[0].normal == new Vector2(0f,1f))
             {
-                Debug.Log("撞到第一種階梯");
                 currentFloor = other.gameObject;
                 ModifyHp(1);
                 other.gameObject.GetComponent<AudioSource>().Play();
@@ -64,7 +65,6 @@ public class Player : MonoBehaviour
         {
             if(other.contacts[0].normal == new Vector2(0f,1f))
             {
-                Debug.Log("撞到第二種階梯");
                 currentFloor = other.gameObject;
                 ModifyHp(-3);
                 anim.SetTrigger("hurt");
@@ -74,7 +74,6 @@ public class Player : MonoBehaviour
         }
         else if(other.gameObject.tag == "Ceiling")
         {
-            Debug.Log("撞到天花板");
             currentFloor.GetComponent<BoxCollider2D>().enabled = false;
             ModifyHp(-3);
             anim.SetTrigger("hurt");
@@ -87,7 +86,7 @@ public class Player : MonoBehaviour
         if(other.gameObject.tag == "DeathLine")
         {
             Debug.Log("你輸了");
-            deathSound.Play();
+            Die();
         }
     }
 
@@ -97,10 +96,10 @@ public class Player : MonoBehaviour
         {
             Hp=10;
         }
-        else if(Hp<0)
+        else if(Hp<=0)
         {
             Hp = 0;
-            deathSound.Play();
+            Die();
         }
         UpdateHpBar();
     }
@@ -129,5 +128,18 @@ public class Player : MonoBehaviour
             scoreTime = 0f;
             scoreText.text = "地下" + score.ToString() + "層";
         }
+    }
+
+    void Die()
+    {
+        deathSound.Play();
+        Time.timeScale = 0f;
+        replayButton.SetActive(true);
+    }
+
+    public void Replay()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("SampleScene");
     }
 }
