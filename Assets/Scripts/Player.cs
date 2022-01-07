@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
     [SerializeField] float moveSpeed = 1f;
@@ -9,10 +9,16 @@ public class Player : MonoBehaviour
     GameObject currentFloor;
 
     [SerializeField] int Hp;
+    [SerializeField] GameObject HpBar;
+    [SerializeField] Text scoreText;
+    int score;
+    float scoreTime;
     // Start is called before the first frame update
     void Start()
     {
         Hp = 10;
+        score = 0;
+        scoreTime = 0f;
     }
 
     // Update is called once per frame
@@ -26,6 +32,7 @@ public class Player : MonoBehaviour
         {
             transform.Translate(-moveSpeed*Time.deltaTime, 0, 0);
         }
+        UpdateScore();
     }
 
     private void OnCollisionEnter2D(Collision2D other)
@@ -74,6 +81,33 @@ public class Player : MonoBehaviour
         else if(Hp<0)
         {
             Hp = 0;
+        }
+        UpdateHpBar();
+    }
+
+    void  UpdateHpBar()
+    {
+        for(int i=0; i<HpBar.transform.childCount; i++)
+        {
+            if(Hp>i)
+            {
+                HpBar.transform.GetChild(i).gameObject.SetActive(true);
+            }
+            else
+            {
+                HpBar.transform.GetChild(i).gameObject.SetActive(false);
+            }
+        }
+    }
+
+    void UpdateScore()
+    {
+        scoreTime += Time.deltaTime;
+        if(scoreTime>2f)
+        {
+            score++;
+            scoreTime = 0f;
+            scoreText.text = "地下" + score.ToString() + "層";
         }
     }
 }
