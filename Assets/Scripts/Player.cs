@@ -13,12 +13,18 @@ public class Player : MonoBehaviour
     [SerializeField] Text scoreText;
     int score;
     float scoreTime;
+    Animator anim;
+    SpriteRenderer render;
+    AudioSource deathSound;
     // Start is called before the first frame update
     void Start()
     {
         Hp = 10;
         score = 0;
         scoreTime = 0f;
+        anim = GetComponent<Animator>();
+        render = GetComponent<SpriteRenderer>();
+        deathSound = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -27,10 +33,17 @@ public class Player : MonoBehaviour
         if(Input.GetKey(KeyCode.D))
         {
             transform.Translate(moveSpeed*Time.deltaTime, 0, 0);
+            render.flipX = false;
+            anim.SetBool("run", true);
         }
-        if(Input.GetKey(KeyCode.A))
+        else if(Input.GetKey(KeyCode.A))
         {
             transform.Translate(-moveSpeed*Time.deltaTime, 0, 0);
+            render.flipX = true;
+            anim.SetBool("run", true);
+        }else
+        {
+            anim.SetBool("run", false);
         }
         UpdateScore();
     }
@@ -44,6 +57,7 @@ public class Player : MonoBehaviour
                 Debug.Log("撞到第一種階梯");
                 currentFloor = other.gameObject;
                 ModifyHp(1);
+                other.gameObject.GetComponent<AudioSource>().Play();
             }
         }
         else if(other.gameObject.tag == "Nails")
@@ -53,6 +67,8 @@ public class Player : MonoBehaviour
                 Debug.Log("撞到第二種階梯");
                 currentFloor = other.gameObject;
                 ModifyHp(-3);
+                anim.SetTrigger("hurt");
+                other.gameObject.GetComponent<AudioSource>().Play();
             }
         
         }
@@ -61,6 +77,8 @@ public class Player : MonoBehaviour
             Debug.Log("撞到天花板");
             currentFloor.GetComponent<BoxCollider2D>().enabled = false;
             ModifyHp(-3);
+            anim.SetTrigger("hurt");
+            other.gameObject.GetComponent<AudioSource>().Play();
         }
     }
 
@@ -69,6 +87,7 @@ public class Player : MonoBehaviour
         if(other.gameObject.tag == "DeathLine")
         {
             Debug.Log("你輸了");
+            deathSound.Play();
         }
     }
 
@@ -81,6 +100,7 @@ public class Player : MonoBehaviour
         else if(Hp<0)
         {
             Hp = 0;
+            deathSound.Play();
         }
         UpdateHpBar();
     }
